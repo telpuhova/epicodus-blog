@@ -8,9 +8,6 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by Guest on 1/9/18.
- */
 public class PostTest {
     @Before
     public void setUp() throws Exception {
@@ -83,4 +80,37 @@ public class PostTest {
         Post otherPost = new Post("How to pair successfully");
         assertEquals(2, Post.findById(otherPost.getId()).getId());
     }
+
+    @Test
+    public void updateChangesPostContent() throws Exception {
+        Post post = setupNewPost();
+        String formerContent = post.getContent();
+        LocalDateTime formerDate = post.getCreatedAt();
+        int formerId = post.getId();
+
+        post.update("Android: Day 40");
+
+        assertEquals(formerId, post.getId());
+        assertEquals(formerDate, post.getCreatedAt());
+        assertNotEquals(formerContent, post.getContent());
+    }
+
+    @Test
+    public void deleteDeletesASpecificPost() throws Exception {
+        Post post = setupNewPost();
+        Post otherPost = new Post("How to pair successfully");
+        post.deletePost();
+        assertEquals(1, Post.getAll().size()); //one is left
+        assertEquals(Post.getAll().get(0).getId(), 2); //the one that was deleted has the id of 2. Why do we care?
+    }
+
+    @Test
+    public void deleteAllPostsDeletesAllPosts() throws Exception {
+        Post post = setupNewPost();
+        Post otherPost = setupNewPost();
+
+        Post.clearAllPosts();
+        assertEquals(0, Post.getAll().size());
+    }
+
 }
